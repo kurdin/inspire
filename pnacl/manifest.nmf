@@ -1,0 +1,7 @@
+{
+  "program": {
+    "x86-32": { "url": "video_encoder_main-x86-32.nexe" },
+    "x86-64": { "url": "video_encoder_main-x86-64.nexe" },
+    "arm": { "url": "video_encoder_main-arm.nexe" }
+  }
+}

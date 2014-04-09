@@ -1,0 +1,10 @@
+{
+    "program": {
+        "portable": {
+            "pnacl-translate": {
+                "url": "video_encoder_main-pnacl.pexe",
+                    "optlevel": 3
+            }
+        }
+    }
+}
