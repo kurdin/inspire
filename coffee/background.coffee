@@ -1,57 +1,95 @@
+angular.module("inspire.app", ["castly.bgRecord", "castly.bgUpload", "w69b.chromePersistentLogger"]).run(["bgRecordService", "bgUploadService", "analytics", "$log", "chromePersistentLogger", 
+(bgRecord, bgUpload, logger) ->
 
-class Background
+	class Background
 
-	constructor: ->
-		# Initialize ourself
-		$( => @init() )
-
-
-	init: ->
-		# Register handlers
-		#$('.capture').click () => @startCapture()
-		console.log 'Initializing..'
-		@startCapture()
+		nativeDiv: null
+		encoder: null
+		videoElement: null
 
 
-	startCapture: ->
-		embedString = '<embed width=0 height=0 src="pnacl/manifest.nmf" ps_tty_prefix="ps:" ps_stdout="/dev/tty" ps_stderr="/dev/tty" type="application/x-nacl" />'
-		embedDiv = $('<div />').appendTo 'body'
-
-		# Register our event listeners, then embed it
-		embedDiv[0].addEventListener 'load', () => @handleLoad()
-		embedDiv.on 'load', () => @handleLoad()
-		embedDiv[0].addEventListener 'error', () => @handleError()
-		embedDiv.on 'error', () => @handleError()
-		embedDiv[0].addEventListener 'message', () => @handleMessage()
-		embedDiv.on 'message', () => @handleMessage()
-
-		embedDiv.html embedString
+		constructor: ->
+			# Initialize ourself
+			$( => @init() )
 
 
-	handleLoad: ->
-		console.log 'Loaded!!'
+		init: ->
+			# Register handlers
+			#$('.capture').click () => @startCapture()
+			console.log 'Initializing..'
+			@startCapture()
 
 
-	handleError: ->
-		console.log 'Error!!'
+		startCapture: ->
+			###embedString = '<embed width=0 height=0 src="pnacl/manifest.nmf" ps_tty_prefix="ps:" ps_stdout="/dev/tty" ps_stderr="/dev/tty" type="application/x-nacl" />'
+			embedDiv = $('<div />')
+
+			# Register our event listeners, then embed it
+			embedDiv[0].addEventListener 'load', (() => @handleLoad()), true
+			embedDiv[0].addEventListener 'error', (() => @handleError()), true
+			embedDiv[0].addEventListener 'crash', (() => @handleError()), true
+			embedDiv[0].addEventListener 'message', ((msg) => @handleMessage(msg)), true
+
+			embedDiv[0].innerHTML = embedString
+			embedDiv.appendTo 'body'
+
+			@encoder = embedDiv[0].children[0]###
+			bgRecord.start()
 
 
-	handleMessage: ->
-		console.log 'Message!!'
+		handleLoad: ->
+			console.log 'Loaded native encoder.'
+			@sendFrame()
 
 
-# Execute
-new Background()
+		handleError: ->
+			console.log 'Error.'
 
-###chrome.app.runtime.onLaunched.addListener(function(launchData) {
-  alert('opened');
-});
 
-chrome.runtime.onInstalled.addListener(function() {
-  console.log('installed');
-});
+		handleCrash: ->
+			console.log 'Crash.'
 
-chrome.runtime.onSuspend.addListener(function() { 
-  // Do some simple clean-up tasks.
-});
-###
+
+		handleMessage: (msg) ->
+			console.log "Message: #{msg.data}" 
+
+
+		sendFrame: ->
+			
+
+
+		setupScreenCapture: ->
+			# Initialize our screen capture method
+			videoElement = document.createElement 'video'
+			videoElement.src = 
+			videoElement.play()
+
+
+
+
+	# Execute
+	new Background()
+
+	###chrome.app.runtime.onLaunched.addListener(function(launchData) {
+	  alert('opened');
+	});
+
+	chrome.runtime.onInstalled.addListener(function() {
+	  console.log('installed');
+	});
+
+	chrome.runtime.onSuspend.addListener(function() { 
+	  // Do some simple clean-up tasks.
+	});
+	###
+
+]);
+
+
+bootstrap = () ->
+  a = document.createElement "div"
+  document.body.appendChild(a)
+
+  angular.bootstrap a, ["inspire.app"]
+
+bootstrap()
